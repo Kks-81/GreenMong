@@ -6,11 +6,12 @@ app = Flask(__name__)
 
 # 데이터베이스 연결 함수
 def get_db_connection():
-    connection = sqlite3.connect('esg_survey.db')
+    db_path = os.path.join(os.path.dirname(__file__), 'esg_survey.db')
+    connection = sqlite3.connect(db_path)
     connection.row_factory = sqlite3.Row
     return connection
 
-# 데이터베이스 초기화 함수
+# 데이터베이스 초기화 함수 (처음에만 수동으로 실행)
 def init_db():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -35,7 +36,7 @@ def init_db():
     connection.close()
 
 # 초기 데이터베이스 설정
-init_db()
+# init_db()  # 주석 처리하여 매번 초기화되지 않도록 함.
 
 # 산업군 선택 페이지
 @app.route('/')
@@ -139,5 +140,5 @@ def results():
     return render_template('results.html', result=latest_result, industry=industry)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)  # 배포 환경에서는 gunicorn을 사용하여 실행
 
